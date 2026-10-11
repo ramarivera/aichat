@@ -95,3 +95,13 @@ Source version is 1.1.0. Publication uses exactly one GitHub Actions version tag
 
 `cargo fmt --all --check` doesn't traverse client modules registered through `register_client!`; also run `rustfmt --edition 2021 --check src/client/openai_responses.rs src/client/codex_app_server.rs` for these additions.
 
+
+### Published 1.1.0 receipt
+
+- Released source [`9375a08fd5fdcca35e2ef58ef83e4c33d9abb4d4`](https://github.com/ramarivera/aichat/commit/9375a08fd5fdcca35e2ef58ef83e4c33d9abb4d4), pushed to `main`.
+- Pushed `v1.1.0` exactly once. [GitHub Actions run 38152869206](https://github.com/ramarivera/aichat/actions/runs/38152869206) completed successfully, including all ten archive targets and the crates.io publish job. No local publication or workflow dispatch was used.
+- [GitHub release v1.1.0](https://github.com/ramarivera/aichat/releases/tag/v1.1.0) contains ten uploaded archives. Cross-platform builds succeeded; non-Linux runtime behavior wasn't exercised.
+- `cargo info rr-aichat@1.1.0 --registry crates-io`, run outside the checkout, confirmed [registry version 1.1.0](https://crates.io/crates/rr-aichat/1.1.0). The downloaded crate's `.cargo_vcs_info.json` matches the released source commit.
+- A fresh `cargo install rr-aichat --version 1.1.0 --locked` into `~/dev/agentic-scratchpads/aichat/main/registry-1.1.0-9375a08/` reported `rr-aichat 1.1.0`.
+- That registry-installed binary completed real subscription inference in both modes, returning `REGISTRY_STREAM_OK` and `REGISTRY_BUFFERED_OK`. The system-default installation and Toolbox configuration weren't changed.
+
