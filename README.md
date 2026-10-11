@@ -45,7 +45,7 @@ Upstream's Homebrew, pacman, Scoop and Termux packages install AIChat, not this 
 
 See [docs/releasing.md](docs/releasing.md) for `cargo login` / `cargo publish` instructions.
 
-Tag pushes run the release workflow. To recover a missed trigger for an existing tag, dispatch the same workflow manually:
+Tag pushes are configured to start the release workflow, but pushes of `v1.0.1` and `v1.0.2` created no runs on this fork. Version `1.0.1` was published using this manual recovery command:
 
 ```nu
 gh workflow run release.yaml --repo ramarivera/aichat --ref main -f tag=v1.0.1
@@ -200,14 +200,14 @@ These guides are maintained by the upstream AIChat project. Remember to substitu
 
 ## Release notes
 
-### 1.0.2
+### 1.0.2, tagged but unpublished
 
-- Automation verification release using only a version-tag push.
+- Pushed `v1.0.2` to test automatic publishing. No Actions run was created, and the version remains unpublished.
 - No CLI functionality changes.
 
 ### 1.0.1
 
-- Release to verify tag-triggered builds, GitHub release archives and crates.io publishing.
+- Published through manual GitHub Actions recovery after tag pushes created no run.
 - No CLI functionality changes.
 
 ### 1.0.0
