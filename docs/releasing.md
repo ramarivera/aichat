@@ -60,3 +60,14 @@ Verified locally for 1.0.0:
 - `cargo info rr-aichat@1.0.0 --registry crates-io`, run outside this repository, confirmed the registry version, licenses and fork repository URL.
 - A fresh `cargo install rr-aichat --version 1.0.0 --locked` into a scratch installation root built the registry release; its executable reported `rr-aichat 1.0.0`.
 - No version tag was pushed.
+
+## Automation verification release 1.0.1
+
+Ramiro authorized a dummy release to test the publishing workflow after configuring `CRATES_IO_API_TOKEN`. The requested `1.0.0.1` isn't valid SemVer; this test uses the patch version `1.0.1`.
+
+- [x] Prepare and verify package version 1.0.1 without changing CLI functionality.
+- [ ] Commit the release and push `v1.0.1`.
+- [ ] Verify the tag-triggered cross-platform builds and GitHub release archives.
+- [ ] Verify GitHub Actions publishes 1.0.1 to crates.io and install the registry package.
+
+Do not publish 1.0.1 locally. Publication must come from the retained GitHub Actions workflow to prove that route works.

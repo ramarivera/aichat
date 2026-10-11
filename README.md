@@ -192,6 +192,11 @@ These guides are maintained by the upstream AIChat project. Remember to substitu
 
 ## Release notes
 
+### 1.0.1
+
+- Release to verify tag-triggered builds, GitHub release archives and crates.io publishing.
+- No CLI functionality changes.
+
 ### 1.0.0
 
 - First release of the rr-aichat fork.
