@@ -1,6 +1,6 @@
-# Publishing rr-aichat 1.0.0
+# Releasing rr-aichat
 
-Requested outcome: release this fork as the `rr-aichat` crate and executable at version `1.0.0`, credit the original source in the README, verify the release package, then commit and push. The initial request left crates.io publication to the maintainer. Ramiro subsequently confirmed Cargo was logged in and authorized publication from this clone.
+Release preparation, publishing procedures and verification receipts for the independently maintained `rr-aichat` crate and executable. Preserve upstream attribution and both license files.
 
 ## Preparation checklist
 
@@ -15,8 +15,6 @@ Requested outcome: release this fork as the `rr-aichat` crate and executable at 
 Run these from the repository root after preparation is complete:
 
 ```nu
-cd ~/dev/aichat
-$env.CARGO_TARGET_DIR = ($env.HOME | path join "dev" "agentic-scratchpads" "aichat" "main" "target")
 cargo login
 cargo publish --locked
 ```
@@ -31,7 +29,7 @@ Choose one publishing route for each version. If you publish 1.0.0 manually, pus
 
 ## Verification
 
-From the repository root, with `CARGO_TARGET_DIR` set as above:
+From the repository root:
 
 ```nu
 cargo test --locked --all
@@ -63,7 +61,7 @@ Verified locally for 1.0.0:
 
 ## Automation verification release 1.0.1
 
-Ramiro authorized a dummy release to test the publishing workflow after configuring `CRATES_IO_API_TOKEN`. The requested `1.0.0.1` isn't valid SemVer; this test uses the patch version `1.0.1`.
+Version 1.0.1 tested the retained publishing workflow with the repository's `CRATES_IO_API_TOKEN` secret.
 
 - [x] Prepare and verify package version 1.0.1 without changing CLI functionality.
 - [ ] Commit the release and push `v1.0.1`.
@@ -74,14 +72,13 @@ Do not publish 1.0.1 locally. Publication must come from the retained GitHub Act
 
 ## 1.1.0 adapter release
 
-Ramiro revised the Codex acceptance boundary to one-shot subscription inference with available tool suppression. Returned commands must remain text until AIChat's explicit execution action. A universal Codex no-tools guarantee isn't claimed.
+The Codex client supports one-shot subscription inference with available tool suppression. Returned commands remain text until AIChat's explicit execution action. A universal Codex no-tools guarantee isn't claimed.
 
 The Responses client uses stateless local history and API credentials. The Codex client uses existing ChatGPT authentication, a fresh ephemeral thread and exactly one turn per request. Reasoning settings are optional; unsupported capabilities and unexpected tools fail explicitly.
 
-- Real Codex 0.162.0 subscription inference returned `ONE_SHOT_OK`.
-- Actual Nushell `ai` returned `WRAPPER_STREAM_OK` and `WRAPPER_BUFFERED_OK` with streaming and nonstreaming chat.
-- Nushell `ai!` and zsh reviewed command generation returned shell-specific suggestions without creating either sentinel file. The existing command/code-only CLI paths use nonstreaming transport.
-- The Nushell wrapper requires unrelated provider variables and rejects empty values. The smoke supplied inert, unused provider markers; actual inference still required the managed ChatGPT account. No Toolbox files changed.
+- Real Codex 0.162.0 subscription inference passed.
+- Native chat passed with streaming and nonstreaming transport.
+- Nushell and zsh command generation returned shell-specific suggestions without executing them. The command/code-only CLI paths use nonstreaming transport.
 - The PTY fixture exercised the actual execution UI. Before the review key, no command ran; `q` left the sentinel absent, while `e` created it with the expected contents.
 - Responses real-account verification remains fixture-only. The earlier ambient API credential was rejected; no token was printed.
 - Live Alt+E editor interaction, Fish, PowerShell and other platform runtime behavior weren't exercised.
@@ -102,25 +99,25 @@ Source version is 1.1.0. Publication uses exactly one GitHub Actions version tag
 - Pushed `v1.1.0` exactly once. [GitHub Actions run 38152869206](https://github.com/ramarivera/aichat/actions/runs/38152869206) completed successfully, including all ten archive targets and the crates.io publish job. No local publication or workflow dispatch was used.
 - [GitHub release v1.1.0](https://github.com/ramarivera/aichat/releases/tag/v1.1.0) contains ten uploaded archives. Cross-platform builds succeeded; non-Linux runtime behavior wasn't exercised.
 - `cargo info rr-aichat@1.1.0 --registry crates-io`, run outside the checkout, confirmed [registry version 1.1.0](https://crates.io/crates/rr-aichat/1.1.0). The downloaded crate's `.cargo_vcs_info.json` matches the released source commit.
-- A fresh `cargo install rr-aichat --version 1.1.0 --locked` into `~/dev/agentic-scratchpads/aichat/main/registry-1.1.0-9375a08/` reported `rr-aichat 1.1.0`.
-- That registry-installed binary completed real subscription inference in both modes, returning `REGISTRY_STREAM_OK` and `REGISTRY_BUFFERED_OK`. The system-default installation and Toolbox configuration weren't changed.
+- A fresh `cargo install rr-aichat --version 1.1.0 --locked` reported `rr-aichat 1.1.0`.
+- The registry-installed binary completed real subscription inference in both streaming modes.
 
 
 ## 1.1.1 account-preflight release
 
 The Codex adapter now requests `account/read` with `refreshToken: false`. It no longer asks for an unconditional token refresh on every invocation. Existing subscription-only account validation remains in place, and token renewal stays with Codex.
 
-The rebuilt source binary completed a real GPT-6 Luna subscription request, returning `CACHED_ACCOUNT_OK`. All 65 tests, Cargo formatting, explicit client rustfmt checks and Clippy with warnings denied passed. Forced token-expiration recovery wasn't exercised.
+The rebuilt source binary completed real native ChatGPT subscription inference. All 65 tests, Cargo formatting, explicit client rustfmt checks and Clippy with warnings denied passed. Forced token-expiration recovery wasn't exercised.
 
 Published through exactly one `v1.1.1` tag using the existing GitHub Actions workflow. No local upload, manual workflow dispatch or duplicate tag push was used.
 
-This patch doesn't prevent Codex's global instruction loading. The managed default remains the inference gateway authorized in `toolbox-10g`; publication must not change that route or the installed system-default binary.
+This patch doesn't prevent Codex's global instruction loading.
 
 ### Published 1.1.1 receipt
 
 - Released source [`1f65ff3e0fa3a4bcfa4a66e10eef181696a9c4bf`](https://github.com/ramarivera/aichat/commit/1f65ff3e0fa3a4bcfa4a66e10eef181696a9c4bf) includes the native auth fix from `213f436`.
 - [GitHub Actions run 38167344904](https://github.com/ramarivera/aichat/actions/runs/38167344904) completed all ten archive targets and crates.io publication successfully. [GitHub release v1.1.1](https://github.com/ramarivera/aichat/releases/tag/v1.1.1) contains ten assets.
 - `cargo info rr-aichat@1.1.1 --registry crates-io` confirmed [registry version 1.1.1](https://crates.io/crates/rr-aichat/1.1.1). Its `.cargo_vcs_info.json` matches the released source above; its Codex account preflight sends `refreshToken: false`.
-- A fresh `cargo install rr-aichat --version 1.1.1 --locked` into `~/dev/agentic-scratchpads/aichat/main/registry-1.1.1-1f65ff3/` reported `rr-aichat 1.1.1`.
-- Explicit native selection with `--model subscription:gpt-6-luna` and the scratch configuration applied after Mise initialization returned `REGISTRY_111_NATIVE_BUFFERED_OK` and `REGISTRY_111_NATIVE_STREAM_OK`. Earlier package probes inherited the live gateway configuration; only the explicitly selected native probes establish native inference.
-- The installed system-default binary remains 1.1.0, with gateway default `inference:gpt-6-luna`. No global instruction files or gateway configuration changed. Cross-platform builds succeeded; non-Linux runtime and forced token-expiration recovery weren't exercised.
+- A fresh `cargo install rr-aichat --version 1.1.1 --locked` reported `rr-aichat 1.1.1`.
+- The registry-installed binary completed real native ChatGPT subscription inference with streaming and nonstreaming transport, with the native client explicitly selected.
+- Cross-platform builds succeeded; non-Linux runtime and forced token-expiration recovery weren't exercised.
