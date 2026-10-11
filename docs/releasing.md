@@ -106,10 +106,12 @@ Source version is 1.1.0. Publication uses exactly one GitHub Actions version tag
 - That registry-installed binary completed real subscription inference in both modes, returning `REGISTRY_STREAM_OK` and `REGISTRY_BUFFERED_OK`. The system-default installation and Toolbox configuration weren't changed.
 
 
-## Unreleased account-preflight change
+## 1.1.1 account-preflight release
 
 The Codex adapter now requests `account/read` with `refreshToken: false`. It no longer asks for an unconditional token refresh on every invocation. Existing subscription-only account validation remains in place, and token renewal stays with Codex.
 
 The rebuilt source binary completed a real GPT-6 Luna subscription request, returning `CACHED_ACCOUNT_OK`. All 65 tests, Cargo formatting, explicit client rustfmt checks and Clippy with warnings denied passed. Forced token-expiration recovery wasn't exercised.
 
-This source change isn't published or installed as the default binary. It doesn't prevent Codex's global instruction loading. Ramiro authorized switching the managed default to the existing inference gateway instead, tracked in Toolbox as `toolbox-10g`. That route uses the already published OpenAI-compatible client, gateway-owned ChatGPT authentication and low-reasoning GPT-6 Luna, without starting a local Codex app-server.
+Publish this patch through exactly one `v1.1.1` tag using the existing GitHub Actions workflow. Don't publish locally or dispatch a duplicate workflow. Verify the registry source receipt and a fresh installation with real native subscription inference.
+
+This patch doesn't prevent Codex's global instruction loading. The managed default remains the inference gateway authorized in `toolbox-10g`; publication must not change that route or the installed system-default binary.

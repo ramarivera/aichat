@@ -76,7 +76,7 @@ clients:
             reasoning: {effort: low, summary: none}
 ```
 
-Use your existing `codex login` with "Sign in with ChatGPT". Codex 0.162.0 is the minimum tested version. The stdio client checks the managed account, the effective OpenAI provider and the requested model. Missing login, API-key accounts, other providers and unavailable models produce errors. It never reads stored tokens or falls back to separately billed API usage. Unreleased source checks the cached account with `account/read` and `refreshToken: false`, rather than forcing a refresh on every invocation. Token renewal remains Codex's responsibility; published 1.1.0 still requests a proactive refresh.
+Use your existing `codex login` with "Sign in with ChatGPT". Codex 0.162.0 is the minimum tested version. The stdio client checks the managed account, the effective OpenAI provider and the requested model. Missing login, API-key accounts, other providers and unavailable models produce errors. It never reads stored tokens or falls back to separately billed API usage. Since 1.1.1, account preflight uses `account/read` with `refreshToken: false`, rather than forcing a refresh on every invocation. Token renewal remains Codex's responsibility.
 
 Each request creates a fresh ephemeral thread in an isolated working directory and starts exactly one turn. The complete local transcript is supplied once, with system instructions separate from user/assistant history. AIChat owns any saved history; the adapter doesn't resume Codex threads. Final answer deltas stream when their phase is known; commentary and reasoning aren't returned as answer text. Failed/interrupted turns, malformed protocol messages, timeouts and unexpected tools stop the request. Cancellation stops the owned subprocess.
 
@@ -277,6 +277,12 @@ These guides are maintained by the upstream AIChat project. Remember to substitu
 - [FAQ](https://github.com/sigoden/aichat/wiki/FAQ)
 
 ## Release notes
+
+### 1.1.1
+
+- Stop forcing a Codex account-token refresh on every request. Existing account checks and Codex-managed token renewal remain in place.
+- Document that isolated working directories don't exclude Codex's global instruction files.
+
 
 ### 1.0.3
 
