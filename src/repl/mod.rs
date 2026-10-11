@@ -220,7 +220,7 @@ impl Repl {
                 r#"Welcome to {} {}
 Type ".help" for additional help.
 "#,
-                env!("CARGO_CRATE_NAME"),
+                env!("CARGO_PKG_NAME"),
                 env!("CARGO_PKG_VERSION"),
             )
         }

@@ -1,24 +1,49 @@
-# AIChat: All-in-one LLM CLI Tool
+# rr-aichat
 
-[![CI](https://github.com/sigoden/aichat/actions/workflows/ci.yaml/badge.svg)](https://github.com/sigoden/aichat/actions/workflows/ci.yaml)
-[![Crates](https://img.shields.io/crates/v/aichat.svg)](https://crates.io/crates/aichat)
-[![Discord](https://img.shields.io/discord/1226737085453701222?label=Discord)](https://discord.gg/mr3ZZUB9hG)
+[![CI](https://github.com/ramarivera/aichat/actions/workflows/ci.yaml/badge.svg)](https://github.com/ramarivera/aichat/actions/workflows/ci.yaml)
+[![Crates](https://img.shields.io/crates/v/rr-aichat.svg)](https://crates.io/crates/rr-aichat)
 
-AIChat is an all-in-one LLM CLI tool featuring Shell Assistant, CMD & REPL Mode, RAG, AI Tools & Agents, and More. 
+rr-aichat is Ramiro Rivera's independently versioned fork of [AIChat](https://github.com/sigoden/aichat). It provides an LLM CLI, shell assistant, chat REPL, RAG, tools and agents.
+
+## Attribution
+
+The original source was written by sigoden and the [AIChat contributors](https://github.com/sigoden/aichat/graphs/contributors). This fork starts from upstream commit [`82976d3`](https://github.com/sigoden/aichat/commit/82976d349ad97ac9aae0655ad631dace5e2a6385), whose package version is 0.30.0.
+
+The features described below and the screenshots come from upstream AIChat. Its companion tool and agent repository is [sigoden/llm-functions](https://github.com/sigoden/llm-functions).
+
+Upstream license files (`LICENSE-APACHE`, `LICENSE-MIT`) and copyright are preserved; rr-aichat remains under the same MIT OR Apache-2.0 terms.
+
+### Versioning
+
+Version 1.0.0 is this fork's first release, not an upstream AIChat 1.0.0 release. Future releases use this fork's own version numbers.
+
+### What this fork changes
+
+Version 1.0.0 renames the package and executable to `rr-aichat`. It uses `RR_AICHAT_*` environment variables and a separate `rr-aichat` configuration directory, such as `~/.config/rr-aichat` on Linux. Provider API-key names remain unchanged.
+
+The upstream wiki still uses `aichat`, `AICHAT_*` and the `aichat` configuration directory. Substitute this fork's names when following those guides. Model synchronization still uses upstream's model catalog by default.
 
 ## Install
 
-### Package Managers
+### Cargo, after publication
 
-- **Rust Developers:** `cargo install aichat`
-- **Homebrew/Linuxbrew Users:** `brew install aichat`
-- **Pacman Users**: `pacman -S aichat`
-- **Windows Scoop Users:** `scoop install aichat`
-- **Android Termux Users:** `pkg install aichat`
+```nu
+cargo install rr-aichat --locked
+```
 
-### Pre-built Binaries
+### From source
 
-Download pre-built binaries for macOS, Linux, and Windows from [GitHub Releases](https://github.com/sigoden/aichat/releases), extract them, and add the `aichat` binary to your `$PATH`.
+```nu
+git clone https://github.com/ramarivera/aichat
+cd aichat
+cargo install --path . --locked
+```
+
+Upstream's Homebrew, pacman, Scoop and Termux packages install AIChat, not this fork.
+
+### Publishing
+
+See [docs/releasing.md](docs/releasing.md) for `cargo login` / `cargo publish` instructions.
 
 ## Features
 
@@ -28,7 +53,7 @@ Integrate seamlessly with over 20 leading LLM providers through a unified interf
 
 ### CMD Mode
 
-Explore powerful command-line functionalities with AIChat's CMD mode.
+Explore powerful command-line functionalities with rr-aichat's CMD mode.
 
 ![aichat-cmd](https://github.com/user-attachments/assets/6c58c549-1564-43cf-b772-e1c9fe91d19c)
 
@@ -40,7 +65,7 @@ Experience an interactive Chat-REPL with features like tab autocompletion, multi
 
 ### Shell Assistant
 
-Elevate your command-line efficiency. Describe your tasks in natural language, and let AIChat transform them into precise shell commands. AIChat intelligently adjusts to your OS and shell environment.
+Elevate your command-line efficiency. Describe your tasks in natural language, and let rr-aichat transform them into precise shell commands. rr-aichat intelligently adjusts to your OS and shell environment.
 
 ![aichat-execute](https://github.com/user-attachments/assets/0c77e901-0da2-4151-aefc-a2af96bbb004)
 
@@ -48,16 +73,16 @@ Elevate your command-line efficiency. Describe your tasks in natural language, a
 
 Accept diverse input forms such as stdin, local files and directories, and remote URLs, allowing flexibility in data handling.
 
-| Input             | CMD                                  | REPL                             |
-| ----------------- | ------------------------------------ | -------------------------------- |
-| CMD               | `aichat hello`                       |                                  |
-| STDIN             | `cat data.txt \| aichat`             |                                  |
-| Last Reply        |                                      | `.file %%`                       |
-| Local files       | `aichat -f image.png -f data.txt`    | `.file image.png data.txt`       |
-| Local directories | `aichat -f dir/`                     | `.file dir/`                     |
-| Remote URLs       | `aichat -f https://example.com`      | `.file https://example.com`      |
-| External commands | ```aichat -f '`git diff`'```         | ```.file `git diff` ```          |
-| Combine Inputs    | `aichat -f dir/ -f data.txt explain` | `.file dir/ data.txt -- explain` |
+| Input             | CMD                                     | REPL                             |
+| ----------------- | --------------------------------------- | -------------------------------- |
+| CMD               | `rr-aichat hello`                       |                                  |
+| STDIN             | `cat data.txt \| rr-aichat`             |                                  |
+| Last Reply        |                                         | `.file %%`                       |
+| Local files       | `rr-aichat -f image.png -f data.txt`    | `.file image.png data.txt`       |
+| Local directories | `rr-aichat -f dir/`                     | `.file dir/`                     |
+| Remote URLs       | `rr-aichat -f https://example.com`      | `.file https://example.com`      |
+| External commands | ```rr-aichat -f '`git diff`'```         | ```.file `git diff` ```          |
+| Combine Inputs    | `rr-aichat -f dir/ -f data.txt explain` | `.file dir/ data.txt -- explain` |
 
 ### Role
 
@@ -91,7 +116,7 @@ Integrate external documents into your LLM conversations for more accurate and c
 
 Function calling supercharges LLMs by connecting them to external tools and data sources. This unlocks a world of possibilities, enabling LLMs to go beyond their core capabilities and tackle a wider range of tasks.
 
-We have created a new repository [https://github.com/sigoden/llm-functions](https://github.com/sigoden/llm-functions) to help you make the most of this feature.
+The upstream project maintains a companion repository [https://github.com/sigoden/llm-functions](https://github.com/sigoden/llm-functions) to help you make the most of this feature.
 
 #### AI Tools & MCP
 
@@ -107,10 +132,10 @@ AI Agent = Instructions (Prompt) + Tools (Function Callings) + Documents (RAG).
 
 ### Local Server Capabilities
 
-AIChat includes a lightweight built-in HTTP server for easy deployment.
+rr-aichat includes a lightweight built-in HTTP server for easy deployment.
 
 ```
-$ aichat --serve
+$ rr-aichat --serve
 Chat Completions API: http://127.0.0.1:8000/v1/chat/completions
 Embeddings API:       http://127.0.0.1:8000/v1/embeddings
 Rerank API:           http://127.0.0.1:8000/v1/rerank
@@ -146,11 +171,13 @@ A web platform to compare different LLMs side-by-side.
 
 ## Custom Themes
 
-AIChat supports custom dark and light themes, which highlight response text and code blocks.
+rr-aichat supports custom dark and light themes, which highlight response text and code blocks.
 
 ![aichat-themes](https://github.com/sigoden/aichat/assets/4012553/29fa8b79-031e-405d-9caa-70d24fa0acf8)
 
-## Documentation
+## Upstream documentation
+
+These guides are maintained by the upstream AIChat project. Remember to substitute `rr-aichat` / `RR_AICHAT_*` / the `rr-aichat` config directory as noted above.
 
 - [Chat-REPL Guide](https://github.com/sigoden/aichat/wiki/Chat-REPL-Guide)
 - [Command-Line Guide](https://github.com/sigoden/aichat/wiki/Command-Line-Guide)
@@ -163,10 +190,21 @@ AIChat supports custom dark and light themes, which highlight response text and 
 - [Custom REPL Prompt](https://github.com/sigoden/aichat/wiki/Custom-REPL-Prompt)
 - [FAQ](https://github.com/sigoden/aichat/wiki/FAQ)
 
+## Release notes
+
+### 1.0.0
+
+- First release of the rr-aichat fork.
+- Renamed the package, executable, shell completions and integrations.
+- Separate configuration directory and environment-variable prefix.
+- Preserved the upstream LLM features and licenses.
+- Updated the async macro dependencies and redundant source expressions for Rust 1.99 Clippy compatibility.
+- Replaced the yanked `slab` lockfile version with a compatible patch release.
+
 ## License
 
 Copyright (c) 2023-2025 aichat-developers.
 
-AIChat is made available under the terms of either the MIT License or the Apache License 2.0, at your option.
+This project is made available under the terms of either the MIT License or the Apache License 2.0, at your option.
 
 See the LICENSE-APACHE and LICENSE-MIT files for license details.

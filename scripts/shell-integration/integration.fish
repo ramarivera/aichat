@@ -1,9 +1,9 @@
-function _aichat_fish
+function _rr_aichat_fish
     set -l _old (commandline)
     if test -n $_old
         echo -n "⌛"
         commandline -f repaint
-        commandline (aichat -e $_old)
+        commandline (rr-aichat -e $_old)
     end
 end
-bind \ee _aichat_fish
+bind \ee _rr_aichat_fish

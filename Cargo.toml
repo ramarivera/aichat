@@ -1,14 +1,19 @@
 [package]
-name = "aichat"
-version = "0.30.0"
+name = "rr-aichat"
+version = "1.0.0"
 edition = "2021"
-authors = ["sigoden <sigoden@gmail.com>"]
-description = "All-in-one LLM CLI Tool"
+authors = ["sigoden <sigoden@gmail.com>", "Ramiro Rivera"]
+description = "Independently maintained AIChat fork: LLM CLI, shell assistant, RAG, tools and agents"
 license = "MIT OR Apache-2.0"
-homepage = "https://github.com/sigoden/aichat"
-repository = "https://github.com/sigoden/aichat"
+homepage = "https://github.com/ramarivera/aichat"
+repository = "https://github.com/ramarivera/aichat"
+readme = "README.md"
 categories = ["command-line-utilities"]
 keywords = ["chatgpt", "llm", "cli", "ai", "repl"]
+
+[[bin]]
+name = "rr-aichat"
+path = "src/main.rs"
 
 [dependencies]
 anyhow = "1.0.69"
@@ -32,7 +37,7 @@ parking_lot = "0.12.1"
 fancy-regex = "0.14.0"
 base64 = "0.22.0"
 nu-ansi-term = "0.50.0"
-async-trait = "0.1.74"
+async-trait = "0.1.92"
 textwrap = "0.16.0"
 ansi_colours = "1.2.2"
 reqwest-eventsource = "0.6.0"
@@ -41,7 +46,7 @@ log = "0.4.20"
 shell-words = "1.1.0"
 sha2 = "0.10.8"
 unicode-width = "0.2.0"
-async-recursion = "1.1.1"
+async-recursion = "1.2.0"
 http = "1.1.0"
 http-body-util = "0.1"
 hyper = { version = "1.0", features = ["full"] }

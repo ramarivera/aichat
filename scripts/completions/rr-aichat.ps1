@@ -1,12 +1,12 @@
 using namespace System.Management.Automation
 using namespace System.Management.Automation.Language
 
-Register-ArgumentCompleter -Native -CommandName 'aichat' -ScriptBlock {
+Register-ArgumentCompleter -Native -CommandName 'rr-aichat' -ScriptBlock {
     param($wordToComplete, $commandAst, $cursorPosition)
 
     $commandElements = $commandAst.CommandElements
     $command = @(
-        'aichat'
+        'rr-aichat'
         for ($i = 1; $i -lt $commandElements.Count; $i++) {
             $element = $commandElements[$i]
             if ($element -isnot [StringConstantExpressionAst] -or
@@ -19,7 +19,7 @@ Register-ArgumentCompleter -Native -CommandName 'aichat' -ScriptBlock {
     }) -join ';'
 
     $completions = @(switch ($command) {
-        'aichat' {
+        'rr-aichat' {
             [CompletionResult]::new('-m', '-m', [CompletionResultType]::ParameterName, 'Select a LLM model')
             [CompletionResult]::new('--model', '--model', [CompletionResultType]::ParameterName, 'Select a LLM model')
             [CompletionResult]::new('--prompt', '--prompt', [CompletionResultType]::ParameterName, 'Use the system prompt')
@@ -61,8 +61,8 @@ Register-ArgumentCompleter -Native -CommandName 'aichat' -ScriptBlock {
         }
     })
 
-    function Get-AichatValues($arg) {
-        $(aichat $arg) -split '\n' | ForEach-Object { [CompletionResult]::new($_) }
+    function Get-RrAichatValues($arg) {
+        $(rr-aichat $arg) -split '\n' | ForEach-Object { [CompletionResult]::new($_) }
     }
 
     if ($commandElements.Count -gt 1) {
@@ -71,19 +71,18 @@ Register-ArgumentCompleter -Native -CommandName 'aichat' -ScriptBlock {
             $offset=1
         }
         $flag = $commandElements[$commandElements.Count-$offset].ToString()
-        dump-args $flag ($flag -eq "-R") > /tmp/file1
         if ($flag -ceq "-m" -or $flag -eq "--model") {
-            $completions = Get-AichatValues "--list-models"
+            $completions = Get-RrAichatValues "--list-models"
         } elseif ($flag -ceq "-r" -or $flag -eq "--role") {
-            $completions = Get-AichatValues "--list-roles"
+            $completions = Get-RrAichatValues "--list-roles"
         } elseif ($flag -ceq "-s" -or $flag -eq "--session") {
-            $completions = Get-AichatValues "--list-sessions"
+            $completions = Get-RrAichatValues "--list-sessions"
         } elseif ($flag -ceq "-a" -or $flag -eq "--agent") {
-            $completions = Get-AichatValues "--list-agents"
+            $completions = Get-RrAichatValues "--list-agents"
         } elseif ($flag -eq "--rag") {
-            $completions = Get-AichatValues "--list-rags"
+            $completions = Get-RrAichatValues "--list-rags"
         } elseif ($flag -eq "--macro") {
-            $completions = Get-AichatValues "--list-macros"
+            $completions = Get-RrAichatValues "--list-macros"
         } elseif ($flag -ceq "-f" -or $flag -eq "--file") {
             $completions = @()
         }

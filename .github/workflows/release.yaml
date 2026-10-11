@@ -114,7 +114,7 @@ jobs:
       run: |
         set -euxo pipefail
 
-        bin=${GITHUB_REPOSITORY##*/}
+        bin=rr-aichat
         dist_dir=`pwd`/dist
         name=$bin-$version-$target
         executable=target/$target/release/$bin

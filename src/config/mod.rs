@@ -290,10 +290,10 @@ impl Config {
         if let Ok(v) = env::var(get_env_name("config_dir")) {
             PathBuf::from(v)
         } else if let Ok(v) = env::var("XDG_CONFIG_HOME") {
-            PathBuf::from(v).join(env!("CARGO_CRATE_NAME"))
+            PathBuf::from(v).join(env!("CARGO_PKG_NAME"))
         } else {
             let dir = dirs::config_dir().expect("No user's config directory");
-            dir.join(env!("CARGO_CRATE_NAME"))
+            dir.join(env!("CARGO_PKG_NAME"))
         }
     }
 
@@ -480,7 +480,7 @@ impl Config {
                 true => None,
                 false => Some(Config::local_path(&format!(
                     "{}.log",
-                    env!("CARGO_CRATE_NAME")
+                    env!("CARGO_PKG_NAME")
                 ))),
             },
         };
@@ -493,7 +493,7 @@ impl Config {
         edit_file(&editor, &config_path)?;
         println!(
             "NOTE: Remember to restart {} if there are changes made to '{}",
-            env!("CARGO_CRATE_NAME"),
+            env!("CARGO_PKG_NAME"),
             config_path.display(),
         );
         Ok(())
@@ -1541,7 +1541,7 @@ impl Config {
         if !agent_config_path.exists() {
             std::fs::write(
                 &agent_config_path,
-                "# see https://github.com/sigoden/aichat/blob/main/config.agent.example.yaml\n",
+                "# see https://github.com/ramarivera/aichat/blob/main/config.agent.example.yaml\n",
             )
             .with_context(|| format!("Failed to write to '{}'", agent_config_path.display()))?;
         }
@@ -2412,7 +2412,7 @@ impl Config {
         if let Some("auto") = self.user_agent.as_deref() {
             self.user_agent = Some(format!(
                 "{}/{}",
-                env!("CARGO_CRATE_NAME"),
+                env!("CARGO_PKG_NAME"),
                 env!("CARGO_PKG_VERSION")
             ));
         }
@@ -2638,7 +2638,7 @@ async fn create_config_file(config_path: &Path) -> Result<()> {
 
     let config_data = serde_yaml::to_string(&config).with_context(|| "Failed to create config")?;
     let config_data = format!(
-        "# see https://github.com/sigoden/aichat/blob/main/config.example.yaml\n\n{config_data}"
+        "# see https://github.com/ramarivera/aichat/blob/main/config.example.yaml\n\n{config_data}"
     );
 
     ensure_parent_exists(config_path)?;

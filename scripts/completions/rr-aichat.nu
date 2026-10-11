@@ -1,57 +1,57 @@
 module completions {
 
-  def "nu-complete aichat completions" [] {
+  def "nu-complete rr-aichat completions" [] {
     [ "bash" "zsh" "fish" "powershell" "nushell" ]
   }
 
-  def "nu-complete aichat model" [] {
-    ^aichat --list-models |
-    | lines 
-    | parse "{value}" 
+  def "nu-complete rr-aichat model" [] {
+    ^rr-aichat --list-models
+    | lines
+    | parse "{value}"
   }
 
-  def "nu-complete aichat role" [] {
-    ^aichat --list-roles |
-    | lines 
-    | parse "{value}" 
+  def "nu-complete rr-aichat role" [] {
+    ^rr-aichat --list-roles
+    | lines
+    | parse "{value}"
   }
 
-  def "nu-complete aichat session" [] {
-    ^aichat --list-sessions |
-    | lines 
-    | parse "{value}" 
+  def "nu-complete rr-aichat session" [] {
+    ^rr-aichat --list-sessions
+    | lines
+    | parse "{value}"
   }
 
-  def "nu-complete aichat agent" [] {
-    ^aichat --list-agents |
-    | lines 
-    | parse "{value}" 
+  def "nu-complete rr-aichat agent" [] {
+    ^rr-aichat --list-agents
+    | lines
+    | parse "{value}"
   }
 
-  def "nu-complete aichat rag" [] {
-    ^aichat --list-rags |
-    | lines 
-    | parse "{value}" 
+  def "nu-complete rr-aichat rag" [] {
+    ^rr-aichat --list-rags
+    | lines
+    | parse "{value}"
   }
 
-  def "nu-complete aichat macro" [] {
-    ^aichat --list-macros |
-    | lines 
-    | parse "{value}" 
+  def "nu-complete rr-aichat macro" [] {
+    ^rr-aichat --list-macros
+    | lines
+    | parse "{value}"
   }
 
-  export extern aichat [
-    --model(-m): string@"nu-complete aichat model"      # Select a LLM model
+  export extern rr-aichat [
+    --model(-m): string@"nu-complete rr-aichat model"   # Select a LLM model
     --prompt                                            # Use the system prompt
-    --role(-r): string@"nu-complete aichat role"        # Select a role
-    --session(-s): string@"nu-complete aichat session"  # Start or join a session
+    --role(-r): string@"nu-complete rr-aichat role"     # Select a role
+    --session(-s): string@"nu-complete rr-aichat session" # Start or join a session
     --empty-session                                     # Ensure the session is empty
     --save-session                                      # Ensure the new conversation is saved to the session
-    --agent(-a): string@"nu-complete aichat agent"      # Start a agent
+    --agent(-a): string@"nu-complete rr-aichat agent"   # Start a agent
     --agent-variable                                    # Set agent variables
-    --rag: string@"nu-complete aichat rag"              # Start a RAG
+    --rag: string@"nu-complete rr-aichat rag"           # Start a RAG
     --rebuild-rag                                       # Rebuild the RAG to sync document changes
-    --macro: string@"nu-complete aichat macro"          # Execute a macro
+    --macro: string@"nu-complete rr-aichat macro"       # Execute a macro
     --serve                                             # Serve the LLM API and WebAPP
     --execute(-e)                                       # Execute commands in natural language
     --code(-c)                                          # Output code only
