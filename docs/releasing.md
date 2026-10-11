@@ -112,6 +112,15 @@ The Codex adapter now requests `account/read` with `refreshToken: false`. It no 
 
 The rebuilt source binary completed a real GPT-6 Luna subscription request, returning `CACHED_ACCOUNT_OK`. All 65 tests, Cargo formatting, explicit client rustfmt checks and Clippy with warnings denied passed. Forced token-expiration recovery wasn't exercised.
 
-Publish this patch through exactly one `v1.1.1` tag using the existing GitHub Actions workflow. Don't publish locally or dispatch a duplicate workflow. Verify the registry source receipt and a fresh installation with real native subscription inference.
+Published through exactly one `v1.1.1` tag using the existing GitHub Actions workflow. No local upload, manual workflow dispatch or duplicate tag push was used.
 
 This patch doesn't prevent Codex's global instruction loading. The managed default remains the inference gateway authorized in `toolbox-10g`; publication must not change that route or the installed system-default binary.
+
+### Published 1.1.1 receipt
+
+- Released source [`1f65ff3e0fa3a4bcfa4a66e10eef181696a9c4bf`](https://github.com/ramarivera/aichat/commit/1f65ff3e0fa3a4bcfa4a66e10eef181696a9c4bf) includes the native auth fix from `213f436`.
+- [GitHub Actions run 38167344904](https://github.com/ramarivera/aichat/actions/runs/38167344904) completed all ten archive targets and crates.io publication successfully. [GitHub release v1.1.1](https://github.com/ramarivera/aichat/releases/tag/v1.1.1) contains ten assets.
+- `cargo info rr-aichat@1.1.1 --registry crates-io` confirmed [registry version 1.1.1](https://crates.io/crates/rr-aichat/1.1.1). Its `.cargo_vcs_info.json` matches the released source above; its Codex account preflight sends `refreshToken: false`.
+- A fresh `cargo install rr-aichat --version 1.1.1 --locked` into `~/dev/agentic-scratchpads/aichat/main/registry-1.1.1-1f65ff3/` reported `rr-aichat 1.1.1`.
+- Explicit native selection with `--model subscription:gpt-6-luna` and the scratch configuration applied after Mise initialization returned `REGISTRY_111_NATIVE_BUFFERED_OK` and `REGISTRY_111_NATIVE_STREAM_OK`. Earlier package probes inherited the live gateway configuration; only the explicitly selected native probes establish native inference.
+- The installed system-default binary remains 1.1.0, with gateway default `inference:gpt-6-luna`. No global instruction files or gateway configuration changed. Cross-platform builds succeeded; non-Linux runtime and forced token-expiration recovery weren't exercised.
