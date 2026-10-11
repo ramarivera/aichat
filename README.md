@@ -200,6 +200,11 @@ These guides are maintained by the upstream AIChat project. Remember to substitu
 
 ## Release notes
 
+### 1.0.3
+
+- Release to verify automatic version-tag builds and crates.io publishing.
+- No CLI functionality changes.
+
 ### 1.0.2, tagged but unpublished
 
 - Pushed `v1.0.2` to test automatic publishing. No Actions run was created, and the version remains unpublished.

@@ -2650,7 +2650,7 @@ dependencies = [
 
 [[package]]
 name = "rr-aichat"
-version = "1.0.2"
+version = "1.0.3"
 dependencies = [
  "ansi_colours",
  "anyhow",

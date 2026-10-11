@@ -1,6 +1,6 @@
 [package]
 name = "rr-aichat"
-version = "1.0.2"
+version = "1.0.3"
 edition = "2021"
 authors = ["sigoden <sigoden@gmail.com>", "Ramiro Rivera"]
 description = "Independently maintained AIChat fork: LLM CLI, shell assistant, RAG, tools and agents"
