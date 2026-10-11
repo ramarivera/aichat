@@ -45,13 +45,17 @@ Upstream's Homebrew, pacman, Scoop and Termux packages install AIChat, not this 
 
 See [docs/releasing.md](docs/releasing.md) for `cargo login` / `cargo publish` instructions.
 
-Tag pushes are configured to start the release workflow, but pushes of `v1.0.1` and `v1.0.2` created no runs on this fork. Version `1.0.1` was published using this manual recovery command:
+Pushing a new `vX.Y.Z` tag starts the release workflow. Commit and push the matching package version first; stable tags publish to crates.io after all platform builds pass.
+
+Manual dispatch can recover a missed trigger for an existing unpublished tag. This command recovered `v1.0.1` before it was published:
 
 ```nu
 gh workflow run release.yaml --repo ramarivera/aichat --ref main -f tag=v1.0.1
 ```
 
-The workflow builds the tagged source, checks that its package version matches the tag, uploads release archives and publishes stable versions to crates.io. Don't dispatch a version that's already published.
+The workflow checks that the tag matches the package version. Don't dispatch or push a stable tag for a version that's already published.
+
+Tag publishing passed end to end with [`v1.0.3`](https://github.com/ramarivera/aichat/actions/runs/38142275933) on 2026-10-11. The push-triggered run built all 10 platform archives and published [`rr-aichat 1.0.3`](https://crates.io/crates/rr-aichat/1.0.3) from commit [`6d2f426`](https://github.com/ramarivera/aichat/commit/6d2f426). The Linux archive matched GitHub's SHA-256 digest; its executable and a fresh registry installation passed version and offline prompt checks. The cause of the earlier missed tag triggers wasn't confirmed.
 
 ## Features
 
