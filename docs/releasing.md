@@ -7,8 +7,8 @@ Requested outcome: release this fork as the `rr-aichat` crate and executable at 
 - [x] Rename the package and executable and update affected scripts and metadata.
 - [x] Document the fork, original author, upstream repository and source revision; preserve both license files.
 - [x] Verify the packaged build and exercise the CLI without a provider account.
-- [ ] Commit and push the prepared release to the fork.
-- [ ] Publish rr-aichat 1.0.0 and verify its crates.io record.
+- [x] Commit and push the prepared release to the fork.
+- [x] Publish rr-aichat 1.0.0 and verify its crates.io record.
 
 ## Maintainer commands
 
@@ -51,3 +51,12 @@ Verified locally for 1.0.0:
 - The local HTTP server returned the model catalog at `/v1/models`.
 - The archive contained the renamed executable target, embedded assets and unchanged MIT and Apache license files.
 - Bash and Zsh syntax checks passed; Nushell loaded the completion and integration scripts. Fish and PowerShell weren't installed on the verification host.
+
+## Release receipt
+
+- Published [rr-aichat 1.0.0](https://crates.io/crates/rr-aichat/1.0.0) on 2026-10-11 from this clone.
+- Published source commit: [`0ffb854`](https://github.com/ramarivera/aichat/commit/0ffb854), pushed to `origin/main`.
+- `cargo publish --locked` verified and uploaded the package, then confirmed registry availability.
+- `cargo info rr-aichat@1.0.0 --registry crates-io`, run outside this repository, confirmed the registry version, licenses and fork repository URL.
+- A fresh `cargo install rr-aichat --version 1.0.0 --locked` into a scratch installation root built the registry release; its executable reported `rr-aichat 1.0.0`.
+- No version tag was pushed.
