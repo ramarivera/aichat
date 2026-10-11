@@ -200,6 +200,11 @@ These guides are maintained by the upstream AIChat project. Remember to substitu
 
 ## Release notes
 
+### 1.0.2
+
+- Automation verification release using only a version-tag push.
+- No CLI functionality changes.
+
 ### 1.0.1
 
 - Release to verify tag-triggered builds, GitHub release archives and crates.io publishing.
