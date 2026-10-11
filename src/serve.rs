@@ -340,7 +340,13 @@ impl Server {
                             SseEvent::Text(text) => {
                                 let _ = tx.send(ResEvent::Text(text));
                             }
-                            SseEvent::Done => {
+                            SseEvent::Done(metadata) => {
+                                if metadata.id.is_some()
+                                    || metadata.input_tokens.is_some()
+                                    || metadata.output_tokens.is_some()
+                                {
+                                    let _ = tx.send(ResEvent::Metadata(metadata));
+                                }
                                 let _ = tx.send(ResEvent::Done);
                                 sse_rx.close();
                             }
@@ -379,13 +385,19 @@ impl Server {
                         let ret = client
                             .chat_completions_streaming_inner(http_client, handler, data)
                             .await;
-                        let first = match ret {
+                        let mut first = match ret {
                             Ok(()) => None,
                             Err(err) => Some(format!("{err:?}")),
                         };
+                        let failed = first.is_some();
                         if is_first.load(Ordering::SeqCst) {
-                            let _ = tx.send(ResEvent::First(first));
+                            let _ = tx.send(ResEvent::First(first.take()));
                             is_first.store(false, Ordering::SeqCst)
+                        }
+                        if failed {
+                            if let Some(error) = first {
+                                let _ = tx.send(ResEvent::Error(error));
+                            }
                         }
                         let tool_calls = handler.tool_calls().to_vec();
                         if !tool_calls.is_empty() {
@@ -413,13 +425,18 @@ impl Server {
                 bail!("{err}");
             }
 
-            let shared: Arc<(String, String, i64, AtomicBool)> =
-                Arc::new((completion_id, model_name, created, AtomicBool::new(false)));
+            let shared = Arc::new((
+                completion_id,
+                model_name,
+                created,
+                AtomicBool::new(false),
+                AtomicBool::new(false),
+            ));
             let stream = UnboundedReceiverStream::new(rx);
             let stream = stream.filter_map(move |res_event| {
                 let shared = shared.clone();
                 async move {
-                    let (completion_id, model, created, has_tool_calls) = shared.as_ref();
+                    let (completion_id, model, created, has_tool_calls, failed) = shared.as_ref();
                     match res_event {
                         ResEvent::Text(text) => {
                             Some(Ok(create_text_frame(completion_id, model, *created, &text)))
@@ -433,12 +450,41 @@ impl Server {
                                 &tool_calls,
                             )))
                         }
-                        ResEvent::Done => Some(Ok(create_done_frame(
-                            completion_id,
-                            model,
-                            *created,
-                            has_tool_calls.load(Ordering::SeqCst),
-                        ))),
+                        ResEvent::Metadata(metadata) => {
+                            let input_tokens = metadata.input_tokens.unwrap_or_default();
+                            let output_tokens = metadata.output_tokens.unwrap_or_default();
+                            let value = json!({
+                                "id": completion_id,
+                                "upstream_response_id": metadata.id,
+                                "object": "chat.completion.chunk",
+                                "created": created,
+                                "model": model,
+                                "choices": [],
+                                "usage": {
+                                    "prompt_tokens": input_tokens,
+                                    "completion_tokens": output_tokens,
+                                    "total_tokens": input_tokens + output_tokens,
+                                },
+                            });
+                            Some(Ok(Frame::data(Bytes::from(format!("data: {value}\n\n")))))
+                        }
+                        ResEvent::Error(error) => {
+                            failed.store(true, Ordering::SeqCst);
+                            let value = json!({"error": {"message": error}});
+                            Some(Ok(Frame::data(Bytes::from(format!("data: {value}\n\n")))))
+                        }
+                        ResEvent::Done => {
+                            if failed.load(Ordering::SeqCst) {
+                                Some(Ok(Frame::data(Bytes::from("data: [DONE]\n\n"))))
+                            } else {
+                                Some(Ok(create_done_frame(
+                                    completion_id,
+                                    model,
+                                    *created,
+                                    has_tool_calls.load(Ordering::SeqCst),
+                                )))
+                            }
+                        }
                         _ => None,
                     }
                 }
@@ -620,6 +666,8 @@ enum ResEvent {
     First(Option<String>),
     Text(String),
     ToolCalls(Vec<ToolCall>),
+    Metadata(ResponseMetadata),
+    Error(String),
     Done,
 }
 

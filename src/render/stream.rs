@@ -52,7 +52,7 @@ pub async fn raw_stream(
                     print!("{text}");
                     stdout().flush()?;
                 }
-                SseEvent::Done => {
+                SseEvent::Done(_) => {
                     break;
                 }
             }
@@ -145,7 +145,7 @@ async fn markdown_stream_inner(
 
                     writer.flush()?;
                 }
-                SseEvent::Done => {
+                SseEvent::Done(_) => {
                     break 'outer;
                 }
             }
@@ -164,14 +164,14 @@ async fn markdown_stream_inner(
 
 async fn gather_events(rx: &mut UnboundedReceiver<SseEvent>) -> Vec<SseEvent> {
     let mut texts = vec![];
-    let mut done = false;
+    let mut done = None;
     tokio::select! {
         _ = async {
             while let Some(reply_event) = rx.recv().await {
                 match reply_event {
                     SseEvent::Text(v) => texts.push(v),
-                    SseEvent::Done => {
-                        done = true;
+                    SseEvent::Done(metadata) => {
+                        done = Some(metadata);
                         break;
                     }
                 }
@@ -183,8 +183,8 @@ async fn gather_events(rx: &mut UnboundedReceiver<SseEvent>) -> Vec<SseEvent> {
     if !texts.is_empty() {
         events.push(SseEvent::Text(texts.join("")))
     }
-    if done {
-        events.push(SseEvent::Done)
+    if let Some(metadata) = done {
+        events.push(SseEvent::Done(metadata))
     }
     events
 }

@@ -1,6 +1,6 @@
 [package]
 name = "rr-aichat"
-version = "1.0.3"
+version = "1.1.0"
 edition = "2021"
 authors = ["sigoden <sigoden@gmail.com>", "Ramiro Rivera"]
 description = "Independently maintained AIChat fork: LLM CLI, shell assistant, RAG, tools and agents"
@@ -27,7 +27,7 @@ reedline = "0.40.0"
 serde = { version = "1.0.152", features = ["derive"] }
 serde_json = { version = "1.0.93", features = ["preserve_order"] }
 serde_yaml = "0.9.17"
-tokio = { version = "1.34.0", features = ["rt", "time", "macros", "signal", "rt-multi-thread"] }
+tokio = { version = "1.34.0", features = ["rt", "time", "macros", "signal", "rt-multi-thread", "process", "io-util"] }
 tokio-graceful = "0.2.2"
 tokio-stream = { version = "0.1.15", default-features = false, features = ["sync"] }
 crossterm = "0.28.1"

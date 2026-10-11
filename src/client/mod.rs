@@ -15,6 +15,18 @@ pub use stream::*;
 register_client!(
     (openai, "openai", OpenAIConfig, OpenAIClient),
     (
+        openai_responses,
+        "openai-responses",
+        OpenAIResponsesConfig,
+        OpenAIResponsesClient
+    ),
+    (
+        codex_app_server,
+        "codex-app-server",
+        CodexAppServerConfig,
+        CodexAppServerClient
+    ),
+    (
         openai_compatible,
         "openai-compatible",
         OpenAICompatibleConfig,

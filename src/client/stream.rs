@@ -13,6 +13,7 @@ pub struct SseHandler {
     abort_signal: AbortSignal,
     buffer: String,
     tool_calls: Vec<ToolCall>,
+    metadata: ResponseMetadata,
 }
 
 impl SseHandler {
@@ -22,6 +23,7 @@ impl SseHandler {
             abort_signal,
             buffer: String::new(),
             tool_calls: Vec::new(),
+            metadata: ResponseMetadata::default(),
         }
     }
 
@@ -46,7 +48,8 @@ impl SseHandler {
 
     pub fn done(&mut self) {
         // debug!("HandleDone");
-        let ret = self.sender.send(SseEvent::Done);
+        let metadata = self.take_response_metadata();
+        let ret = self.sender.send(SseEvent::Done(metadata));
         if ret.is_err() {
             if self.abort_signal.aborted() {
                 return;
@@ -59,6 +62,23 @@ impl SseHandler {
         // debug!("HandleCall: {:?}", call);
         self.tool_calls.push(call);
         Ok(())
+    }
+
+    pub fn set_response_metadata(
+        &mut self,
+        id: Option<String>,
+        input_tokens: Option<u64>,
+        output_tokens: Option<u64>,
+    ) {
+        self.metadata = ResponseMetadata {
+            id,
+            input_tokens,
+            output_tokens,
+        };
+    }
+
+    pub fn take_response_metadata(&mut self) -> ResponseMetadata {
+        std::mem::take(&mut self.metadata)
     }
 
     pub fn abort(&self) -> AbortSignal {
@@ -77,10 +97,17 @@ impl SseHandler {
     }
 }
 
+#[derive(Debug, Clone, Default)]
+pub struct ResponseMetadata {
+    pub id: Option<String>,
+    pub input_tokens: Option<u64>,
+    pub output_tokens: Option<u64>,
+}
+
 #[derive(Debug)]
 pub enum SseEvent {
     Text(String),
-    Done,
+    Done(ResponseMetadata),
 }
 
 #[derive(Debug)]

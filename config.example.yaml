@@ -119,6 +119,27 @@ clients:
     api_key: xxx
     organization_id: org-xxx                          # Optional
 
+
+  # Native Responses transport. OPENAI_API_KEY is a fallback after client env/config.
+  # Text/functions only; storage is false and local history is replayed once.
+  - type: openai-responses
+    name: responses
+    api_base: https://api.openai.com/v1
+    timeout_seconds: 180
+    # api_key: xxx                                  # Or RESPONSES_API_KEY / OPENAI_API_KEY
+    # patch:
+    #   chat_completions:
+    #     'your-reasoning-model':
+    #       body:
+    #         reasoning: {effort: low}
+
+  # Unavailable for inference: Codex 0.162.0 has no complete no-tools contract.
+  # This performs safe account/model checks, then refuses before any thread/turn.
+  # Use codex login with Sign in with ChatGPT; never supply a Platform API key.
+  - type: codex-app-server
+    name: subscription
+    executable: codex
+
   # For any platform compatible with OpenAI's API
   - type: openai-compatible
     name: ollama

@@ -71,3 +71,23 @@ Ramiro authorized a dummy release to test the publishing workflow after configur
 - [ ] Verify GitHub Actions publishes 1.0.1 to crates.io and install the registry package.
 
 Do not publish 1.0.1 locally. Publication must come from the retained GitHub Actions workflow to prove that route works.
+
+## Unreleased 1.1.0 adapter work
+
+Requested outcome is a native Responses adapter plus safe Codex inference through the existing ChatGPT subscription login: both adapters, real subscription inference, verified source/package, then one tag-driven publication and a fresh registry installation.
+
+Status is incomplete. The native Responses adapter and safe Codex stdio/account/model preflight are implemented. Installed Codex 0.162.0 has no verified complete mechanism to disable all agent tools. The subscription client therefore refuses before `thread/start` or `turn/start`; read-only sandboxing and denied approvals aren't substitutes.
+
+- Source version is prepared as 1.1.0, not published.
+- Fixture tests and actual Nushell wrappers exercised streaming/nonstreaming Responses, reviewed command output and history isolation.
+- The installed Codex returned the safety refusal in both CLI modes after account/model preflight. No inference turn was sent.
+- All 53 tests passed, including the regression that requires streamed text before upstream ID/usage metadata. Clippy passed with warnings denied, and Cargo/rustfmt checks passed. Final verification used raw Cargo subprocesses after the Bash command route exercised a stale executable.
+- `cargo package --locked --allow-dirty` verified the 89-file archive. A separate installation from that final local package reported `rr-aichat 1.1.0`; both CLI streaming modes and HTTP proxy event ordering passed fixture smoke checks. This isn't a registry installation.
+- The ambient Responses credential was rejected by the real API probe. Successful Responses inference verification is fixture-only; no token was printed.
+- Bash/zsh syntax checks and Nushell completion/Alt+E binding loading passed. Live editor interaction, Fish, PowerShell and other platform builds weren't exercised.
+- Real subscription inference, Codex streaming/history and the full handoff's release acceptance remain blocked.
+- Don't push `v1.1.0`, dispatch its publishing workflow or claim both adapters work until the safety contract and real inference acceptance are met.
+
+Retain the GitHub Actions tag route for eventual publication. Don't publish locally, and don't push a duplicate tag for a published version.
+
+`cargo fmt --all --check` doesn't traverse client modules registered through `register_client!`; also run `rustfmt --edition 2021 --check src/client/openai_responses.rs src/client/codex_app_server.rs` for these additions.
