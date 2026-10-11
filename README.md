@@ -23,9 +23,9 @@ Version 1.0.0 renames the package and executable to `rr-aichat`. It uses `RR_AIC
 
 The upstream wiki still uses `aichat`, `AICHAT_*` and the `aichat` configuration directory. Substitute this fork's names when following those guides. Model synchronization still uses upstream's model catalog by default.
 
-### Unreleased 1.1.0 adapters
+### 1.1.0 adapters
 
-The source adds a native Responses client and a fail-closed Codex subscription preflight. **This isn't a completed Codex inference adapter.** Publication is held because installed Codex 0.162.0 can't prove that all agent tools are disabled.
+The fork adds native OpenAI Responses and one-shot Codex subscription clients. Responses uses API credentials; Codex delegates authentication and inference to the existing Codex ChatGPT login.
 
 #### OpenAI Responses
 
@@ -57,24 +57,42 @@ Every request sends the complete local history once and uses `store: false`. It 
 
 The local HTTP proxy remains a Chat Completions API. Responses streaming adds a final usage chunk with `upstream_response_id`; the proxy's completion ID stays stable across its chunks. An incomplete/failed upstream response produces an error, not a successful `stop` result.
 
-#### Codex subscription safety boundary
+#### Codex subscription
 
 ```yaml
 model: subscription:gpt-6.1-sol
 function_calling: false
+temperature: null
+top_p: null
 clients:
   - type: codex-app-server
     name: subscription
     executable: codex
+    timeout_seconds: 180
+    patch:
+      chat_completions:
+        'gpt-6.1-sol':
+          body:
+            reasoning: {effort: low, summary: none}
 ```
 
-Use your existing `codex login` with "Sign in with ChatGPT". The optional executable override is `RR_AICHAT_CODEX_APP_SERVER_EXECUTABLE`. The preflight uses stdio initialization, managed account refresh, effective provider configuration and model discovery. It rejects API-key accounts, missing login, other providers and unavailable models without switching billing modes or reading stored tokens.
+Use your existing `codex login` with "Sign in with ChatGPT". Codex 0.162.0 is the minimum tested version. The stdio client refreshes the managed account, checks the effective OpenAI provider and discovers the requested model. Missing login, API-key accounts, other providers and unavailable models produce errors. It never reads stored tokens or falls back to separately billed API usage.
 
-**Every inference request currently errors before `thread/start` or `turn/start`.** No Codex thread exists, no history is replayed, and no generated command can execute. Read-only sandboxing and denied approvals still allow some tools, including read-only shell execution; they're not a text-only contract. The [0.162.0 protocol](https://github.com/openai/codex/blob/rust-v0.162.0/codex-rs/app-server-protocol/src/protocol/v2/thread.rs) has no universal tool-disable field, and its [tool registration](https://github.com/openai/codex/blob/rust-v0.162.0/codex-rs/core/src/tools/spec_plan.rs) assembles additional core/MCP/extension tools independently.
+Each request creates a fresh ephemeral thread in an isolated working directory and starts exactly one turn. The complete local transcript is supplied once, with system instructions separate from user/assistant history. AIChat owns any saved history; the adapter doesn't resume Codex threads. Final answer deltas stream when their phase is known; commentary and reasoning aren't returned as answer text. Failed/interrupted turns, malformed protocol messages, timeouts and unexpected tools stop the request. Cancellation stops the owned subprocess.
 
-There's no established minimum version for safe subscription inference. Non-generative diagnostics were verified with 0.162.0, but account/model discovery isn't inference proof. Subscription costs remain governed by the Codex account plan; this client never falls back to a paid API key.
+The client disables available shell, web, MCP, plugin, hook, memory and agent features, requests a read-only sandbox without network access, denies approval/tool requests and asks for text-only answers. Managed requirements still apply. This is a command-review boundary, **not proof that every Codex tool is absent**. The [0.162.0 protocol](https://github.com/openai/codex/blob/rust-v0.162.0/codex-rs/app-server-protocol/src/protocol/v2/thread.rs) has no universal tool-disable field; its [tool registration](https://github.com/openai/codex/blob/rust-v0.162.0/codex-rs/core/src/tools/spec_plan.rs) includes independently registered built-ins.
 
-Nushell `ai!` and Alt+E retain their existing review behavior. Noninteractive `--execute` returns the suggested command; Alt+E fills the editor without submitting it. `RR_AICHAT_SHELL` still chooses Nushell or zsh. The existing `--execute`/code-only CLI paths use nonstreaming transport.
+Only reasoning effort and summary patches are supported. Effort must appear in the selected model's catalog; summary accepts `auto`, `concise`, `detailed` or `none`. Temperature, `top_p`, output token limits, images, rr-aichat function calls/history, embeddings and reranking aren't supported. Executable and turn-timeout overrides are `RR_AICHAT_CODEX_APP_SERVER_EXECUTABLE` and `RR_AICHAT_CODEX_APP_SERVER_TIMEOUT_SECONDS`. The default turn timeout is 180 seconds; zero is invalid. Subscription usage follows the Codex account plan.
+
+```nu
+rr-aichat --model subscription:gpt-6.1-sol "Reply with hello"
+rr-aichat --model subscription:gpt-6.1-sol --no-stream "Reply with hello"
+with-env {RR_AICHAT_SHELL: "nu"} {
+  rr-aichat --model subscription:gpt-6.1-sol --execute "Suggest a command for review"
+}
+```
+
+Returned commands remain text. On a terminal, `--execute` shows the command and waits for AIChat's existing execution action, `e` or Enter. `q` quits without execution. With nonterminal stdout it only prints the suggestion. Nushell Alt+E fills the editor without submitting it, and `RR_AICHAT_SHELL` selects Nushell or zsh. The existing `--execute`/code-only paths use nonstreaming transport even when normal chat streaming is enabled.
 
 
 ## Install

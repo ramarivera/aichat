@@ -72,22 +72,26 @@ Ramiro authorized a dummy release to test the publishing workflow after configur
 
 Do not publish 1.0.1 locally. Publication must come from the retained GitHub Actions workflow to prove that route works.
 
-## Unreleased 1.1.0 adapter work
+## 1.1.0 adapter release
 
-Requested outcome is a native Responses adapter plus safe Codex inference through the existing ChatGPT subscription login: both adapters, real subscription inference, verified source/package, then one tag-driven publication and a fresh registry installation.
+Ramiro revised the Codex acceptance boundary to one-shot subscription inference with available tool suppression. Returned commands must remain text until AIChat's explicit execution action. A universal Codex no-tools guarantee isn't claimed.
 
-Status is incomplete. The native Responses adapter and safe Codex stdio/account/model preflight are implemented. Installed Codex 0.162.0 has no verified complete mechanism to disable all agent tools. The subscription client therefore refuses before `thread/start` or `turn/start`; read-only sandboxing and denied approvals aren't substitutes.
+The Responses client uses stateless local history and API credentials. The Codex client uses existing ChatGPT authentication, a fresh ephemeral thread and exactly one turn per request. Reasoning settings are optional; unsupported capabilities and unexpected tools fail explicitly.
 
-- Source version is prepared as 1.1.0, not published.
-- Fixture tests and actual Nushell wrappers exercised streaming/nonstreaming Responses, reviewed command output and history isolation.
-- The installed Codex returned the safety refusal in both CLI modes after account/model preflight. No inference turn was sent.
-- All 53 tests passed, including the regression that requires streamed text before upstream ID/usage metadata. Clippy passed with warnings denied, and Cargo/rustfmt checks passed. Final verification used raw Cargo subprocesses after the Bash command route exercised a stale executable.
-- `cargo package --locked --allow-dirty` verified the 89-file archive. A separate installation from that final local package reported `rr-aichat 1.1.0`; both CLI streaming modes and HTTP proxy event ordering passed fixture smoke checks. This isn't a registry installation.
-- The ambient Responses credential was rejected by the real API probe. Successful Responses inference verification is fixture-only; no token was printed.
-- Bash/zsh syntax checks and Nushell completion/Alt+E binding loading passed. Live editor interaction, Fish, PowerShell and other platform builds weren't exercised.
-- Real subscription inference, Codex streaming/history and the full handoff's release acceptance remain blocked.
-- Don't push `v1.1.0`, dispatch its publishing workflow or claim both adapters work until the safety contract and real inference acceptance are met.
+- Real Codex 0.162.0 subscription inference returned `ONE_SHOT_OK`.
+- Actual Nushell `ai` returned `WRAPPER_STREAM_OK` and `WRAPPER_BUFFERED_OK` with streaming and nonstreaming chat.
+- Nushell `ai!` and zsh reviewed command generation returned shell-specific suggestions without creating either sentinel file. The existing command/code-only CLI paths use nonstreaming transport.
+- The Nushell wrapper requires unrelated provider variables and rejects empty values. The smoke supplied inert, unused provider markers; actual inference still required the managed ChatGPT account. No Toolbox files changed.
+- The PTY fixture exercised the actual execution UI. Before the review key, no command ran; `q` left the sentinel absent, while `e` created it with the expected contents.
+- Responses real-account verification remains fixture-only. The earlier ambient API credential was rejected; no token was printed.
+- Live Alt+E editor interaction, Fish, PowerShell and other platform runtime behavior weren't exercised.
 
-Retain the GitHub Actions tag route for eventual publication. Don't publish locally, and don't push a duplicate tag for a published version.
+- All 65 tests passed, Clippy passed with warnings denied, and Cargo/rustfmt checks passed. The explicit client-file formatting check covers modules registered through macros.
+- `cargo package --locked --allow-dirty` verified the revised archive. The packaged binary completed real subscription chat in both modes and served native Chat Completions JSON/SSE successfully.
+- The packaged proxy rejected an unsupported `max_tokens` limit with HTTP 400. Streaming deltas assembled to `PROXY_STREAM_OK`, followed by a successful terminal chunk and `[DONE]`.
+- Source and package verification used separate Cargo target directories so an extracted package couldn't replace the checkout's executable.
+
+Source version is 1.1.0. Publication uses exactly one GitHub Actions version tag, not local `cargo publish`. Don't push a duplicate tag for a published version.
 
 `cargo fmt --all --check` doesn't traverse client modules registered through `register_client!`; also run `rustfmt --edition 2021 --check src/client/openai_responses.rs src/client/codex_app_server.rs` for these additions.
+

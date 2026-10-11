@@ -133,12 +133,19 @@ clients:
     #       body:
     #         reasoning: {effort: low}
 
-  # Unavailable for inference: Codex 0.162.0 has no complete no-tools contract.
-  # This performs safe account/model checks, then refuses before any thread/turn.
+  # One-shot subscription chat, tested with Codex 0.162.0.
+  # Disable function_calling; leave temperature/top_p unset for this client.
   # Use codex login with Sign in with ChatGPT; never supply a Platform API key.
   - type: codex-app-server
     name: subscription
     executable: codex
+    timeout_seconds: 180
+    # Tool suppression is best-effort; generated commands remain reviewable text.
+    # patch:
+    #   chat_completions:
+    #     'your-codex-model':
+    #       body:
+    #         reasoning: {effort: low, summary: none}
 
   # For any platform compatible with OpenAI's API
   - type: openai-compatible
