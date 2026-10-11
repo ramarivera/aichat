@@ -942,7 +942,7 @@ async fn validate_account_and_model(session: &mut AppServerSession, model: &str)
     session.initialize().await?;
 
     let account_response = session
-        .request("account/read", json!({"refreshToken":true}))
+        .request("account/read", json!({"refreshToken":false}))
         .await
         .context(
             "Unable to verify Codex account. Run `codex login` and select Sign in with ChatGPT.",

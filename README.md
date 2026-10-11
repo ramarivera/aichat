@@ -76,9 +76,11 @@ clients:
             reasoning: {effort: low, summary: none}
 ```
 
-Use your existing `codex login` with "Sign in with ChatGPT". Codex 0.162.0 is the minimum tested version. The stdio client refreshes the managed account, checks the effective OpenAI provider and discovers the requested model. Missing login, API-key accounts, other providers and unavailable models produce errors. It never reads stored tokens or falls back to separately billed API usage.
+Use your existing `codex login` with "Sign in with ChatGPT". Codex 0.162.0 is the minimum tested version. The stdio client checks the managed account, the effective OpenAI provider and the requested model. Missing login, API-key accounts, other providers and unavailable models produce errors. It never reads stored tokens or falls back to separately billed API usage. Unreleased source checks the cached account with `account/read` and `refreshToken: false`, rather than forcing a refresh on every invocation. Token renewal remains Codex's responsibility; published 1.1.0 still requests a proactive refresh.
 
 Each request creates a fresh ephemeral thread in an isolated working directory and starts exactly one turn. The complete local transcript is supplied once, with system instructions separate from user/assistant history. AIChat owns any saved history; the adapter doesn't resume Codex threads. Final answer deltas stream when their phase is known; commentary and reasoning aren't returned as answer text. Failed/interrupted turns, malformed protocol messages, timeouts and unexpected tools stop the request. Cancellation stops the owned subprocess.
+
+Codex can still load global instructions from its existing `CODEX_HOME`. An isolated working directory and custom system instructions don't exclude those files.
 
 The client disables available shell, web, MCP, plugin, hook, memory and agent features, requests a read-only sandbox without network access, denies approval/tool requests and asks for text-only answers. Managed requirements still apply. This is a command-review boundary, **not proof that every Codex tool is absent**. The [0.162.0 protocol](https://github.com/openai/codex/blob/rust-v0.162.0/codex-rs/app-server-protocol/src/protocol/v2/thread.rs) has no universal tool-disable field; its [tool registration](https://github.com/openai/codex/blob/rust-v0.162.0/codex-rs/core/src/tools/spec_plan.rs) includes independently registered built-ins.
 

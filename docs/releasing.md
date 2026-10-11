@@ -105,3 +105,11 @@ Source version is 1.1.0. Publication uses exactly one GitHub Actions version tag
 - A fresh `cargo install rr-aichat --version 1.1.0 --locked` into `~/dev/agentic-scratchpads/aichat/main/registry-1.1.0-9375a08/` reported `rr-aichat 1.1.0`.
 - That registry-installed binary completed real subscription inference in both modes, returning `REGISTRY_STREAM_OK` and `REGISTRY_BUFFERED_OK`. The system-default installation and Toolbox configuration weren't changed.
 
+
+## Unreleased account-preflight change
+
+The Codex adapter now requests `account/read` with `refreshToken: false`. It no longer asks for an unconditional token refresh on every invocation. Existing subscription-only account validation remains in place, and token renewal stays with Codex.
+
+The rebuilt source binary completed a real GPT-6 Luna subscription request, returning `CACHED_ACCOUNT_OK`. All 65 tests, Cargo formatting, explicit client rustfmt checks and Clippy with warnings denied passed. Forced token-expiration recovery wasn't exercised.
+
+This source change isn't published or installed as the default binary. It doesn't prevent Codex's global instruction loading. Ramiro authorized switching the managed default to the existing inference gateway instead, tracked in Toolbox as `toolbox-10g`. That route uses the already published OpenAI-compatible client, gateway-owned ChatGPT authentication and low-reasoning GPT-6 Luna, without starting a local Codex app-server.
